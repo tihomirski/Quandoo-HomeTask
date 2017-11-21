@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="1">
+    <TableRow
+        android:padding="10dp">
+
+        <TextView
+            android:text="@string/status_table_nr"
+            android:textSize="24dp"
+            android:textColor="@android:color/black"
+            android:padding="3dip" />
+        <TextView
+            android:id="@+id/status_table_nr"
+            android:textSize="24dp"
+            android:textColor="@android:color/black"
+            android:gravity="start"
+            android:padding="3dip" />
+    </TableRow>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/black"/>
+
+
+    <TableRow
+        android:paddingLeft="10dp">
+        <TextView
+            android:text="@string/status_operator"
+            android:textSize="18dp"
+            android:padding="3dip" />
+        <TextView
+            android:id="@+id/status_table_operator"
+            android:textSize="18dp"
+            android:gravity="start"
+            android:padding="3dip" />
+    </TableRow>
+
+    <TableRow
+        android:paddingLeft="10dp">
+        <TextView
+            android:text="@string/status_table_to_be_paid"
+            android:textSize="18dp"
+            android:padding="3dip" />
+        <TextView
+            android:id="@+id/status_table_amount"
+            android:textSize="18dp"
+            android:gravity="start"
+            android:padding="3dip" />
+    </TableRow>
+
+</TableLayout>
+
+
+
+
+
+
+
+
+<!--
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tivachkov.reservations.reservations.ActivityTableStatus">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+</LinearLayout>
+-->

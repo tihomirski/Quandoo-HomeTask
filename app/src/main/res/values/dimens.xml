@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_end_listview">56dp</dimen>
+    <dimen name="padding_table_number">16dp</dimen>
+    <dimen name="table_number_size">20sp</dimen>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/table_number_holder"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="@dimen/padding_table_number"
+        android:textSize="@dimen/table_number_size"
+        android:textColor="@android:color/black"
+        android:text="NDA"
+        android:background="@color/colorTableDefault"/>
+
+
+</LinearLayout>

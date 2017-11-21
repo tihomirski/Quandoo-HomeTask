@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_home"
+        android:title="@string/text_home"
+        android:icon="@drawable/icon_home_color_40px" />
+    <item android:id="@+id/action_customers"
+        android:title="@string/text_customers"
+        android:icon="@drawable/icon_customers_color_40px" />
+    <item android:id="@+id/action_tables"
+        android:title="@string/text_tables"
+        android:icon="@drawable/icon_tables_color_40px" />
+</menu>
