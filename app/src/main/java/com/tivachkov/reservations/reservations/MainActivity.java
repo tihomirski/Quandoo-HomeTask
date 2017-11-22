@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         Calendar c = GregorianCalendar.getInstance();
         long millis = c.getTimeInMillis();
-        millis += 1000*60*1;
+        millis += 1000*60*15;
         Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
