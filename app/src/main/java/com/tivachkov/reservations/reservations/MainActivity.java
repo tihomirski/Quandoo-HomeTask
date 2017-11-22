@@ -5,7 +5,11 @@ import helpers.DatabaseHandler;
 import utils.Utils;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -14,7 +18,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-//import static utils.Utils.getArrayListOfCustomersAndInsertIntoDB;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private String customersJSON, tablesJSON;
     private DatabaseHandler dbHandler;
     public static Activity thisActivity;
+    private static final int ALARM_ID = 2057;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setupBottomNavigation();
         //-------------------------| put "loading. please stand by" |----------
         dbHandler = new DatabaseHandler(this);
-//        dbHandler.deleteAllReservations();
-//        dbHandler.deleteAllTables();
-        if (dbHandler.getDBTableCount("Tables") < 0 && dbHandler.getDBTableCount("Reservations") < 0)
+        if (dbHandler.getDBTableCount("Tables") < 0)
             initializeDB();
         //---------------------------------------------------------------------
 
@@ -49,10 +55,13 @@ public class MainActivity extends AppCompatActivity {
             loadHomeFragment();
         }
 
-        //Utils.convertJSONToString(this);
-        ///////initializeData();
-        //Log.d("=======|", "-------------------------| Customers |---------------\n" + customersJSON);
-        //Log.d("=======|", "-------------------------| Tables |---------------\n" + tablesJSON);
+        Calendar c = GregorianCalendar.getInstance();
+        long millis = c.getTimeInMillis();
+        millis += 1000*60*1;
+        Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
 
 
     }
@@ -105,22 +114,6 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-//    private void initializeData() {
-//
-//        //The case, initially I load the lists from the read-only files and the update and removal of tables happen over the list adapted to the ListView of the customers.
-//        //int result = 0;
-//
-//        try {
-//            customersJSON = Utils.readCustomersFromFile();
-//            tablesJSON = readTablesFromFile();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        //return result;
-//    }
-
     private void initializeDB() {
         //SQLiteDatabase db = dbHandler.getWritableDatabase();
         Utils.insertCuatomersIntoDB(this, dbHandler);
@@ -133,4 +126,5 @@ public class MainActivity extends AppCompatActivity {
         dbHandler.deleteAllTables();
         initializeDB();
     }
+
 }
