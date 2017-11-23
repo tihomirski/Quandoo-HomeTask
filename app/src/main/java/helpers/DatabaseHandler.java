@@ -14,8 +14,6 @@ import com.tivachkov.reservations.reservations.Table;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import utils.Utils;
-
 /**
  * Created by tivachkov on 11/21/2017.
  */
@@ -28,7 +26,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public DatabaseHandler(Context context) {
         super(context, DatabaseHandler.DATABASE_NAME, null, DatabaseHandler.DATABASE_VERSION_V1);
-
     }
 
     @Override
@@ -40,6 +37,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO implement later when needed
+    }
+
+    public boolean isTableExisting(String tableName) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name=?", new String[] {tableName});
+        if(cursor!=null) {
+            if(cursor.getCount()>0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
     }
 
     public int getDBTableCount(String tableName) {
@@ -213,7 +223,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //-------------------------------| Alarms |--------------------------------------
 
     public void createAlarmsTable(SQLiteDatabase db) {
-        Log.d("===| DBHandler class", "Creating Reservations Table....................");
+        Log.d("===| DBHandler class", "Creating Alarms Table....................");
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS Alarms(" +
                         "ID INTEGER NOT NULL PRIMARY KEY, " + //No autoincrement, IDs will be defined programmatically if in future other kinds of alarms will be created.
@@ -223,7 +233,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void dropAlarmsTableIfExists(SQLiteDatabase db) {
-        Log.d("===| DBHandler class", "Dropping Reservations Table....................");
+        Log.d("===| DBHandler class", "Dropping Alarms Table....................");
         db.execSQL(
                 "DROP TABLE IF EXISTS Alarms;"
         );
@@ -235,6 +245,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("ID",id);
         values.put("Schedule", schedule);
         db.insert("Alarms", null, values);
+        db.close();
+    }
+
+    public void updateAlarm(int id, long schedule) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        //values.put("ID",id);
+        values.put("Schedule", schedule);
+        db.update("Alarms", values, "ID=?", new String[] {String.valueOf(id)}); // id+1 because the IDs in the DB tables Tables start from 1 and in the gridview start from 0.
         db.close();
     }
 

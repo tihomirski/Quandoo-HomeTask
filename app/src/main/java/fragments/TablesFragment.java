@@ -15,31 +15,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
 
-import com.tivachkov.reservations.reservations.ActivitySelectTable;
 import com.tivachkov.reservations.reservations.ActivityTableStatus;
 import com.tivachkov.reservations.reservations.Customer;
-import com.tivachkov.reservations.reservations.MainActivity;
 import com.tivachkov.reservations.reservations.R;
 import com.tivachkov.reservations.reservations.Table;
 
 import java.util.ArrayList;
 
-import adapters.CustomersAdapter;
 import adapters.TablesAdapter;
 import helpers.DatabaseHandler;
 
 public class TablesFragment extends Fragment {
 
     private GridView mGridView;
-    ArrayList<Customer> customersList;
-    private Context context;
-    private DatabaseHandler dbHandler;
-    private TablesAdapter tablesAdapter;
+    private ArrayList<Customer> mCustomersList;
+    private Context mContext;
+    private DatabaseHandler mDBHandler;
+    private TablesAdapter mTablesAdapter;
 
     public static TablesFragment newInstance() {
-
         return new TablesFragment();
     }
 
@@ -47,21 +42,21 @@ public class TablesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ConstraintLayout fragment = (ConstraintLayout) inflater.inflate(R.layout.fragment_tables, container, false);
-        //Context context = getActivity().getApplicationContext();
-        context = getActivity();
+        //Context mContext = getActivity().getApplicationContext();
+        mContext = getActivity();
         GridView gridView = (GridView) fragment.findViewById(R.id.grid_view_tables_fragment);
 
-        dbHandler = new DatabaseHandler(context);
-        final ArrayList<Table> tablesList = dbHandler.getTables();
+        mDBHandler = new DatabaseHandler(mContext);
+        final ArrayList<Table> tablesList = mDBHandler.getTables();
 
-        tablesAdapter = new TablesAdapter(context, tablesList);
-        gridView.setAdapter(tablesAdapter);
+        mTablesAdapter = new TablesAdapter(mContext, tablesList);
+        gridView.setAdapter(mTablesAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id) {
 
-                Intent intentTableStatus = new Intent(context, ActivityTableStatus.class);
+                Intent intentTableStatus = new Intent(mContext, ActivityTableStatus.class);
                 intentTableStatus.putExtra("tableNr", String.valueOf(position+1));
                 startActivity(intentTableStatus);
 
@@ -70,23 +65,3 @@ public class TablesFragment extends Fragment {
         return fragment;
     }
 }
-
-
-
-
-
-
-
-
-//    public static TablesFragment newInstance() {
-//
-//        return new TablesFragment();
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.fragment_tables, container, false);
-//    }
-//}
-

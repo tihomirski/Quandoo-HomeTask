@@ -5,27 +5,27 @@ package com.tivachkov.reservations.reservations;
  */
 
 public class Alarm {
-    int id;
-    long schedule;
+    private int mID;
+    private long mSchedule;
 
     public Alarm(int id, long schedule) {
-        this.id = id;
-        this.schedule = schedule;
+        this.mID = id;
+        this.mSchedule = schedule;
     }
 
     public int getId() {
-        return id;
+        return mID;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.mID = id;
     }
 
     public long getSchedule() {
-        return schedule;
+        return mSchedule;
     }
 
     public void setSchedule(long schedule) {
-        this.schedule = schedule;
+        this.mSchedule = schedule;
     }
 }

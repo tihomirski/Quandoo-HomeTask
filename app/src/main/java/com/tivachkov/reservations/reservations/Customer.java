@@ -6,41 +6,41 @@ package com.tivachkov.reservations.reservations;
 
 public class Customer {
 
-    private String name, surname;
-    private int id;
+    private String mName, mSurname;
+    private int mID;
 
     public Customer() {
 
     }
 
     public Customer (String name, String surname, int id) {
-        this.name = name;
-        this.surname = surname;
-        this.id = id;
+        this.mName = name;
+        this.mSurname = surname;
+        this.mID = id;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public String getSurname() {
-        return surname;
+        return mSurname;
     }
 
     public void setSurname(String surname) {
-        this.surname = surname;
+        this.mSurname = surname;
     }
 
     public int getId() {
-        return id;
+        return mID;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.mID = id;
     }
 
 

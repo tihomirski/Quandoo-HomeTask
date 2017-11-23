@@ -16,17 +16,16 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class RemoveReservations extends BroadcastReceiver {
 
 
-    Intent emailIntent;
+    private Intent mEmailIntent;
     private Thread mPollThread;
     private Context mContext;
-    private int alarmID;
+    private int mAlarmID;
 
     public void onReceive(Context context, Intent intent) {
-        Log.d("=-=-=-=-=-=-=-=-=", "onReceive().");
-        emailIntent = intent;
+        mEmailIntent = intent;
         this.mContext = context;
         removeReservation(context);
-        alarmID = intent.getIntExtra("alarmID", 0);
+        mAlarmID = intent.getIntExtra("mAlarmID", 0);
     }
 
 
@@ -39,8 +38,8 @@ public class RemoveReservations extends BroadcastReceiver {
 
                     try {
                         DatabaseHandler dbHelper = new DatabaseHandler(mContext);
-                        dbHelper.deleteAllReservations(alarmID);
-                        //dbHelper.deleteAlarm(alarmID);
+                        dbHelper.deleteAllReservations(mAlarmID);
+                        //dbHelper.deleteAlarm(mAlarmID);
                         sendNotification(mContext);
                         Log.e("= = = = = = = =","RESERVATIONS DELETED!");
                     } catch (Exception e) {

@@ -12,41 +12,36 @@ import com.tivachkov.reservations.reservations.*;
 import java.util.ArrayList;
 
 /**
- * Created by E5430 on 11/20/2017.
+ * Created by tivachkov on 11/20/2017.
  */
 
 public class TablesAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
-    private ArrayList<Table> tablesList;
+    private ArrayList<Table> mTablesList;
 
-    // 1
     public TablesAdapter(Context context, ArrayList<Table> tablesList) {
         this.mContext = context;
-        this.tablesList = tablesList;
+        this.mTablesList = tablesList;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    // 2
     @Override
     public int getCount() {
-        return tablesList.size();
+        return mTablesList.size();
     }
 
-    // 3
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    // 4
     @Override
     public Object getItem(int position) {
-        return tablesList.get(position);
+        return mTablesList.get(position);
     }
 
-    // 5
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

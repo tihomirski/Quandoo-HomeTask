@@ -6,17 +6,17 @@ package com.tivachkov.reservations.reservations;
 
 public class Table {
 
-    private boolean available;
+    private boolean mAvailable;
 
     public Table(boolean available) {
-        this.available = available;
+        this.mAvailable = available;
     }
 
     public boolean isAvailable() {
-        return available;
+        return mAvailable;
     }
 
     public void setAvailable(boolean available) {
-        this.available = available;
+        this.mAvailable = available;
     }
 }

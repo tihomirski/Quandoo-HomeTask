@@ -15,7 +15,7 @@ import com.tivachkov.reservations.reservations.R;
 import java.util.ArrayList;
 
 /**
- * Created by E5430 on 11/20/2017.
+ * Created by tivachkov on 11/20/2017.
  */
 
 public class CustomersAdapter extends BaseAdapter {

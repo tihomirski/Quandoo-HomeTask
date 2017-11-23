@@ -225,30 +225,6 @@ public class Utils {
 
     }
 
-
-
-//    private static String loadJsonFromAsset(String filename, Context context) {
-//        String json = null;
-//
-//        try {
-//            InputStream is = context.getAssets().open(filename);
-//            int size = is.available();
-//            byte[] buffer = new byte[size];
-//            is.read(buffer);
-//            is.close();
-//            json = new String(buffer, "UTF-8");
-//        }
-//        catch (java.io.IOException ex) {
-//            ex.printStackTrace();
-//            return null;
-//        }
-//
-//        return json;
-//    }
-
-    //--------------------------
-
-
     private static String readTablesFromFile(Context context) throws IOException {
         String contentStr = "";
 
@@ -268,8 +244,6 @@ public class Utils {
         return contentStr;
     }
 
-
-//------------------------------------------------------------------
     public static int initializeData() {
         int result = 0;
 

@@ -1,7 +1,6 @@
 package com.tivachkov.reservations.reservations;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,24 +15,24 @@ import helpers.DatabaseHandler;
 
 public class ActivitySelectTable extends AppCompatActivity {
 
-    private TablesAdapter tablesAdapter;
-    private DatabaseHandler dbHandler;
-    public static Activity thisActivity;
+    private TablesAdapter mTablesAdapter;
+    private DatabaseHandler mDBHandler;
+    public static Activity sThisActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_table);
 
-        thisActivity = this;
+        sThisActivity = this;
 
         GridView gridView = (GridView)findViewById(R.id.grid_view_tables);
 
-        dbHandler = new DatabaseHandler(this);
-        final ArrayList<Table> tablesList = dbHandler.getTables();
+        mDBHandler = new DatabaseHandler(this);
+        final ArrayList<Table> tablesList = mDBHandler.getTables();
 
-        tablesAdapter = new TablesAdapter(this, tablesList);
-        gridView.setAdapter(tablesAdapter);
+        mTablesAdapter = new TablesAdapter(this, tablesList);
+        gridView.setAdapter(mTablesAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -41,18 +40,18 @@ public class ActivitySelectTable extends AppCompatActivity {
                 Table currentTable = tablesList.get(position);
                 if (currentTable.isAvailable()) {
                     currentTable.setAvailable(false);
-                    dbHandler.setTableAvailability(currentTable.isAvailable(), position);
+                    mDBHandler.setTableAvailability(currentTable.isAvailable(), position);
                     // This tells the GridView to redraw itself
                     // in turn calling your BooksAdapter's getView method again for each cell
-                    tablesAdapter.notifyDataSetChanged();
+                    mTablesAdapter.notifyDataSetChanged();
 
                     Intent intent = getIntent();
                     //int customerID = Integer.parseInt(intent.getStringExtra("customerId"));
                     int customerID = intent.getIntExtra("customerId", 0);
-                    dbHandler.deleteReservation(customerID);
+                    mDBHandler.deleteReservation(customerID);
 
-                    MainActivity.thisActivity.finish();
-                    Intent mainActivityIntent = new Intent(thisActivity, MainActivity.class);
+                    MainActivity.sThisActivity.finish();
+                    Intent mainActivityIntent = new Intent(sThisActivity, MainActivity.class);
                     startActivity(mainActivityIntent);
                 } else {
                     //Here you can put some code to open another activity to check the status of the table

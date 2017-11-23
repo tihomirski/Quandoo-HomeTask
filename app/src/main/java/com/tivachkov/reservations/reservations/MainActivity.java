@@ -28,114 +28,78 @@ import java.util.GregorianCalendar;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView mBottomNavigationView;
-    private DatabaseHandler dbHandler;
-    public static Activity thisActivity;
+    private DatabaseHandler mDBHandler;
+    public static Activity sThisActivity;
     private static final int ALARM_ID = 1234;
-    ProgressDialog ringProgressDialog;
+    ProgressDialog mRingProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        thisActivity = this;
-        if (ActivitySelectTable.thisActivity != null)
-            ActivitySelectTable.thisActivity.finish();
+        sThisActivity = this;
+        if (ActivitySelectTable.sThisActivity != null)
+            ActivitySelectTable.sThisActivity.finish();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setupBottomNavigation();
-        //-------------------------| put "loading. please stand by" |----------
-        dbHandler = new DatabaseHandler(this);
 
-        dbHandler.deleteAllReservations();
-        dbHandler.deleteAllTables();
-        dbHandler.dropAlarmsTableIfExists(dbHandler.getWritableDatabase());
-        dbHandler.createAlarmsTable(dbHandler.getWritableDatabase());
+        mRingProgressDialog = new ProgressDialog(this);
 
+        mDBHandler = new DatabaseHandler(this);
 
-        if (dbHandler.getDBTableCount("Tables") < 0) {
-            ringProgressDialog = new ProgressDialog(this);
-            ringProgressDialog.setMessage("App is initializing ....\n\n");
-            ringProgressDialog.setTitle("Please wait");
-            ringProgressDialog.setCanceledOnTouchOutside(false);
-            ringProgressDialog.setCancelable(true);
-            ringProgressDialog.show();
+//        mDBHandler.dropAlarmsTableIfExists(mDBHandler.getWritableDatabase());
+//        mDBHandler.dropReservationsTableIfExists(mDBHandler.getWritableDatabase());
+//        mDBHandler.dropTablesTableIfExists(mDBHandler.getWritableDatabase());
 
-            //initializeDB();
+        if (!mDBHandler.isTableExisting("Tables")) {
+            Log.e("HHHHHHHHHHHHH","Initializing all DBs");
+
+            mRingProgressDialog.setMessage("App is initializing ....\n\n");
+            mRingProgressDialog.setTitle("Please wait");
+            mRingProgressDialog.setCanceledOnTouchOutside(false);
+            mRingProgressDialog.setCancelable(true);
+            mRingProgressDialog.show();
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         //Do stuff
                         initializeDB();
+                        initializeAlarms();
 
+                        Alarm alarm = mDBHandler.getAlarm(ALARM_ID);
+                        long now = GregorianCalendar.getInstance().getTimeInMillis();
+                        if (alarm == null) {
+                            createAlarm();
+                        } else if (alarm.getSchedule() < now) {
+                            updateAlarm();
+                        } else
+                            Log.e("0101010101010101", "Alarm should NOT be created.");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    ringProgressDialog.dismiss();
-
-
+                    mRingProgressDialog.dismiss();
                 }
             }).start();
+        } else {
+            Alarm alarm = mDBHandler.getAlarm(ALARM_ID);
+            long now = GregorianCalendar.getInstance().getTimeInMillis();
+            if (alarm == null) {
+                createAlarm();
+            } else if (alarm.getSchedule() < now) {
+                updateAlarm();
+            } else
+                Log.e("0101010101010101", "Alarm should NOT be created.");
         }
-
-        //---------------------------------------------------------------------
 
         if (savedInstanceState == null) {
-
             loadHomeFragment();
         }
-
-//        boolean aaaa = dbHandler.isAlarmSet(ALARM_ID);
-//        if (!aaaa) {
-//
-//            Log.e("XxXxXxXxXxXxXxXxXxXx", "Setting an ALARM.......");
-//            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//            AlarmManager.AlarmClockInfo alarmInfo = alarmManager.getNextAlarmClock();
-////            if (alarmManager.getNextAlarmClock() == null) {
-////               Log.d("========", "alarmInfo is null");
-////
-////            }else {
-////               Log.d("========","there is something in alarmInfo");
-////            }
-//            Calendar c = GregorianCalendar.getInstance();
-//            long millis = c.getTimeInMillis();
-//            millis += 1000 * 60 * 1;
-//            Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
-//            wakeIntent.putExtra("alarmID", ALARM_ID);
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_ONE_SHOT);
-//
-//            alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
-//            dbHandler.addAlarm(ALARM_ID);
-//
-//        } else {
-//            Log.e("XxXxXxXxXxXxXxXxXxXx", "ALARM was already SET");
-//        }
-
-
-//        boolean alarmUp = (PendingIntent.getBroadcast(this, ALARM_ID,
-//                new Intent(this, broadcastReceivers.RemoveReservations.class),
-//                PendingIntent.FLAG_NO_CREATE) != null);
-//
-//        if (alarmUp) {
-//            Log.d("myTag", "Alarm is already active");
-//        } else {
-//            Log.d("myTag", "Alarm is NOT active");
-//        }
-
-
-        Alarm alarm = dbHandler.getAlarm(ALARM_ID);
-        long now = GregorianCalendar.getInstance().getTimeInMillis();
-        if (alarm == null || alarm.getSchedule() < now) {
-            createAlarm();
-        } else
-            Log.e("0101010101010101", "Alarm should NOT be created.");
-
-
-
-
 
 
     }
@@ -189,42 +153,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeDB() {
-        //SQLiteDatabase db = dbHandler.getWritableDatabase();
-        Utils.insertCuatomersIntoDB(this, dbHandler);
-        Utils.insertTablesIntoDB(this, dbHandler);
-        dbHandler.createAlarmsTable(dbHandler.getWritableDatabase());
+        mDBHandler.deleteAllReservations();
+        mDBHandler.deleteAllTables();
+
+        Utils.insertCuatomersIntoDB(sThisActivity, mDBHandler);
+        Utils.insertTablesIntoDB(sThisActivity, mDBHandler);
     }
 
+    private void initializeAlarms() {
+
+        mDBHandler.dropAlarmsTableIfExists(mDBHandler.getWritableDatabase());
+        mDBHandler.createAlarmsTable(mDBHandler.getWritableDatabase());
+
+    }
 
     public void buttonResetDB(View view) {
-        ringProgressDialog = new ProgressDialog(this);
-        ringProgressDialog.setMessage("Resetting tables....\n\n");
-        ringProgressDialog.setTitle("Please wait");
-        ringProgressDialog.setCanceledOnTouchOutside(false);
-        ringProgressDialog.setCancelable(true);
-        ringProgressDialog.show();
 
-        //initializeDB();
+        mRingProgressDialog.setMessage("App is initializing ....\n\n");
+        mRingProgressDialog.setTitle("Please wait");
+        mRingProgressDialog.setCanceledOnTouchOutside(false);
+        mRingProgressDialog.setCancelable(true);
+        mRingProgressDialog.show();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     //Do stuff
-                    dbHandler.deleteAllReservations();
-                    dbHandler.deleteAllTables();
-                    dbHandler.dropAlarmsTableIfExists(dbHandler.getWritableDatabase());
+                    mDBHandler.deleteAllReservations();
+                    mDBHandler.deleteAllTables();
 
                     initializeDB();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                ringProgressDialog.dismiss();
-
-
+                mRingProgressDialog.dismiss();
             }
         }).start();
 
+
+
+
+
+
+    }
+
+    public void buttonResetAlarmsDB(View view) {
+
+        mRingProgressDialog.setMessage("App is initializing ....\n\n");
+        mRingProgressDialog.setTitle("Please wait");
+        mRingProgressDialog.setCanceledOnTouchOutside(false);
+        mRingProgressDialog.setCancelable(true);
+        mRingProgressDialog.show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //Do stuff
+                    initializeAlarms();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mRingProgressDialog.dismiss();
+            }
+        }).start();
 
 
 
@@ -238,21 +231,39 @@ public class MainActivity extends AppCompatActivity {
 
         Calendar c = GregorianCalendar.getInstance();
         long millis = c.getTimeInMillis();
-        millis += 1000 * 60 * 15;
+        millis += 1000 * 60 * 2;
+
         Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
-//        Intent wakeIntent = new Intent("com.tivachkov.reservations.reservations.SET_QUANDOO_ALARM");
         wakeIntent.putExtra("alarmID", ALARM_ID);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        //PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_IMMUTABLE);
-
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
-        dbHandler.addAlarm(ALARM_ID, millis);
+        mDBHandler.addAlarm(ALARM_ID, millis);
 
-        if(millis == dbHandler.getAlarm(ALARM_ID).getSchedule()) {
+        if(millis == mDBHandler.getAlarm(ALARM_ID).getSchedule()) {
             Log.e("010101010101010", "millis == DB");
         } else
             Log.e("010101010101010", "millis != DB");
 
+    }
+
+    private void updateAlarm() {
+        Log.e("XxXxXxXxXxXxXxXxXxXx", "Updating an ALARM.......");
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Calendar c = GregorianCalendar.getInstance();
+        long millis = c.getTimeInMillis();
+        millis += 1000 * 60 * 2;
+
+        Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
+        wakeIntent.putExtra("alarmID", ALARM_ID);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
+        mDBHandler.updateAlarm(ALARM_ID, millis);
+
+        if(millis == mDBHandler.getAlarm(ALARM_ID).getSchedule()) {
+            Log.e("010101010101010", "millis == DB");
+        } else
+            Log.e("010101010101010", "millis != DB");
     }
 
 }

@@ -23,10 +23,24 @@
         android:id="@+id/button_initilize_db"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
         android:onClick="buttonResetDB"
         android:padding="16dp"
         android:text="Reset DB"
-        tools:layout_editor_absoluteX="145dp"
-        tools:layout_editor_absoluteY="31dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="145dp" />
+
+    <Button
+        android:id="@+id/button_reset_alarms_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="buttonResetAlarmsDB"
+        android:padding="16dp"
+        android:text="Reset Alarms DB"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/button_initilize_db"
+        tools:layout_editor_absoluteX="115dp" />
 
 </android.support.constraint.ConstraintLayout>

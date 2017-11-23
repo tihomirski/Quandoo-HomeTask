@@ -1,7 +1,7 @@
 package fragments;
 
 /**
- * Created by E5430 on 11/19/2017.
+ * Created by tivachkov on 11/19/2017.
  */
 
 
@@ -25,17 +25,15 @@ import java.util.ArrayList;
 
 import adapters.CustomersAdapter;
 import helpers.DatabaseHandler;
-import utils.Utils;
 
 public class CustomersFragment extends Fragment {
 
     private ListView mListView;
-    ArrayList<Customer> customersList;
-    private Context context;
+    private ArrayList<Customer> mCustomersList;
+    private Context mContext;
     private DatabaseHandler dbHandler;
 
     public static CustomersFragment newInstance() {
-
         return new CustomersFragment();
     }
 
@@ -43,19 +41,19 @@ public class CustomersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ConstraintLayout fragment = (ConstraintLayout) inflater.inflate(R.layout.fragment_customers, container, false);
-        //Context context = getActivity().getApplicationContext();
-        context = getActivity();
+        //Context mContext = getActivity().getApplicationContext();
+        mContext = getActivity();
 
         mListView = (ListView) fragment.findViewById(R.id.customers_list_view);
         // 1
 
-        dbHandler = new DatabaseHandler(context);
-        customersList = dbHandler.getAllReservations();
+        dbHandler = new DatabaseHandler(mContext);
+        mCustomersList = dbHandler.getAllReservations();
 //        // 2
-//        String[] listItems = new String[customersList.size()];
+//        String[] listItems = new String[mCustomersList.size()];
 //        // 3
-//        for(int i = 0; i < customersList.size(); i++){
-//            Customer customer = customersList.get(i);
+//        for(int i = 0; i < mCustomersList.size(); i++){
+//            Customer customer = mCustomersList.get(i);
 //            listItems[i] = customer.getFullname();
 //        }
 //        // 4
@@ -63,15 +61,15 @@ public class CustomersFragment extends Fragment {
 //        ArrayAdapter adapter = new ArrayAdapter(fragment.getContext(), android.R.layout.simple_list_item_1, listItems);
 //        mListView.setAdapter(adapter);
 
-        CustomersAdapter adapter = new CustomersAdapter(context, customersList);
+        CustomersAdapter adapter = new CustomersAdapter(mContext, mCustomersList);
         mListView.setAdapter(adapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Customer selectedCustomer = customersList.get(position);
-                Intent detailIntent = new Intent(context, ActivitySelectTable.class);
+                Customer selectedCustomer = mCustomersList.get(position);
+                Intent detailIntent = new Intent(mContext, ActivitySelectTable.class);
                 //detailIntent.putExtra("name", selectedCustomer.getName() + " " + selectedCustomer.getSurname());
                 detailIntent.putExtra("customerId", selectedCustomer.getId());
                 startActivity(detailIntent);
