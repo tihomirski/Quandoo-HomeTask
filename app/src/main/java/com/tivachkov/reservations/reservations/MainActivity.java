@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHandler dbHandler;
     public static Activity thisActivity;
     private static final int ALARM_ID = 1234;
+    ProgressDialog ringProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,39 @@ public class MainActivity extends AppCompatActivity {
         setupBottomNavigation();
         //-------------------------| put "loading. please stand by" |----------
         dbHandler = new DatabaseHandler(this);
-        if (dbHandler.getDBTableCount("Tables") < 0)
-            initializeDB();
+
+        dbHandler.deleteAllReservations();
+        dbHandler.deleteAllTables();
+        dbHandler.dropAlarmsTableIfExists(dbHandler.getWritableDatabase());
+        dbHandler.createAlarmsTable(dbHandler.getWritableDatabase());
+
+
+        if (dbHandler.getDBTableCount("Tables") < 0) {
+            ringProgressDialog = new ProgressDialog(this);
+            ringProgressDialog.setMessage("App is initializing ....\n\n");
+            ringProgressDialog.setTitle("Please wait");
+            ringProgressDialog.setCanceledOnTouchOutside(false);
+            ringProgressDialog.setCancelable(true);
+            ringProgressDialog.show();
+
+            //initializeDB();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //Do stuff
+                        initializeDB();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    ringProgressDialog.dismiss();
+
+
+                }
+            }).start();
+        }
+
         //---------------------------------------------------------------------
 
         if (savedInstanceState == null) {
@@ -164,11 +197,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void buttonResetDB(View view) {
-        dbHandler.deleteAllReservations();
-        dbHandler.deleteAllTables();
-        dbHandler.dropAlarmsTableIfExists(dbHandler.getWritableDatabase());
+        ringProgressDialog = new ProgressDialog(this);
+        ringProgressDialog.setMessage("Resetting tables....\n\n");
+        ringProgressDialog.setTitle("Please wait");
+        ringProgressDialog.setCanceledOnTouchOutside(false);
+        ringProgressDialog.setCancelable(true);
+        ringProgressDialog.show();
 
-        initializeDB();
+        //initializeDB();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //Do stuff
+                    dbHandler.deleteAllReservations();
+                    dbHandler.deleteAllTables();
+                    dbHandler.dropAlarmsTableIfExists(dbHandler.getWritableDatabase());
+
+                    initializeDB();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ringProgressDialog.dismiss();
+
+
+            }
+        }).start();
+
+
+
+
+
+
     }
 
     private void createAlarm() {

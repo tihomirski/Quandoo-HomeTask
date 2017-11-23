@@ -202,7 +202,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    private void dropTablesTableIfExists(SQLiteDatabase db) {
+    public void dropTablesTableIfExists(SQLiteDatabase db) {
         Log.d("===| DBHandler class", "Dropping Tables Table....................");
         db.execSQL(
                 "DROP TABLE IF EXISTS Tables;"
