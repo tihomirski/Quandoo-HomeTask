@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.tivachkov.reservations.reservations.MainActivity;
 import com.tivachkov.reservations.reservations.R;
 
 import helpers.DatabaseHandler;
@@ -20,15 +19,19 @@ public class RemoveReservations extends BroadcastReceiver {
     Intent emailIntent;
     private Thread mPollThread;
     private Context mContext;
+    private int alarmID;
 
     public void onReceive(Context context, Intent intent) {
-        Log.d("PopReceiver", "onReceive().");
+        Log.d("=-=-=-=-=-=-=-=-=", "onReceive().");
         emailIntent = intent;
         this.mContext = context;
-        sendEmail(context);
+        removeReservation(context);
+        alarmID = intent.getIntExtra("alarmID", 0);
     }
 
-    private void sendEmail(Context context) {
+
+
+    private void removeReservation(Context context) {
 
         //Needs a separate thread. Otherwise throws exception because there are networks tasks in main GUI thread
         mPollThread = new Thread() {
@@ -36,9 +39,10 @@ public class RemoveReservations extends BroadcastReceiver {
 
                     try {
                         DatabaseHandler dbHelper = new DatabaseHandler(mContext);
-                        dbHelper.deleteAllReservations();
+                        dbHelper.deleteAllReservations(alarmID);
+                        //dbHelper.deleteAlarm(alarmID);
                         sendNotification(mContext);
-                        Log.e("= = = = = = = =","RSERVATIONS DELETED!");
+                        Log.e("= = = = = = = =","RESERVATIONS DELETED!");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

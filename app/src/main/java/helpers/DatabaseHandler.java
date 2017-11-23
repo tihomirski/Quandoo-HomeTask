@@ -7,10 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.tivachkov.reservations.reservations.Alarm;
 import com.tivachkov.reservations.reservations.Customer;
 import com.tivachkov.reservations.reservations.Table;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import utils.Utils;
 
@@ -99,6 +101,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         dropReservationsTableIfExists(db);
         createReservationsTable(db);
+        db.close();
+    }
+
+    public void deleteAllReservations(int alarmID) {
+        SQLiteDatabase db = getWritableDatabase();
+        dropReservationsTableIfExists(db);
+        createReservationsTable(db);
+        deleteAlarm(alarmID);
         db.close();
     }
 
@@ -199,5 +209,63 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         );
     }
 
+
+    //-------------------------------| Alarms |--------------------------------------
+
+    public void createAlarmsTable(SQLiteDatabase db) {
+        Log.d("===| DBHandler class", "Creating Reservations Table....................");
+        db.execSQL(
+                "CREATE TABLE IF NOT EXISTS Alarms(" +
+                        "ID INTEGER NOT NULL PRIMARY KEY, " + //No autoincrement, IDs will be defined programmatically if in future other kinds of alarms will be created.
+                        "Schedule INTEGER" +
+                        ");"
+        );
+    }
+
+    public void dropAlarmsTableIfExists(SQLiteDatabase db) {
+        Log.d("===| DBHandler class", "Dropping Reservations Table....................");
+        db.execSQL(
+                "DROP TABLE IF EXISTS Alarms;"
+        );
+    }
+
+    public void addAlarm(int id, long schedule) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("ID",id);
+        values.put("Schedule", schedule);
+        db.insert("Alarms", null, values);
+        db.close();
+    }
+
+    public void deleteAlarm(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("Alarms", "ID=?", (new String[] {String.valueOf(id)}));
+        db.close();
+        Log.e("hhhhhhhhhhhh", "Alarm deleted");
+    }
+
+    public Alarm getAlarm(int id) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Alarms WHERE ID=?", new String[] {String.valueOf(id)});
+//        Cursor cursor = db.query("Alarms",
+//                                    new String[] {"ID"},
+//                                    "ID",
+//                                    new String[] {String.valueOf(id)},
+//                                    null,
+//                                    null,
+//                                    null);
+        if (cursor.getCount() != 0) {
+            if (cursor.moveToFirst()) {
+                Alarm alarm = new Alarm(cursor.getInt(0), cursor.getLong(1));
+                Log.e("JaJaJaJaJaJaJa", "Alarm fetched. ID = " + alarm.getId() + " || Schedule = " + alarm.getSchedule() + " || now = " + GregorianCalendar.getInstance().getTimeInMillis());
+                return alarm;
+            }
+        }
+        db.close();
+        Log.e("JaJaJaJaJaJaJa", "going to return null in getAlarm()");
+        return null;
+    }
 
 }
