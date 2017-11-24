@@ -1,7 +1,7 @@
 package com.tivachkov.reservations.reservations;
 
 /**
- * Created by E5430 on 11/20/2017.
+ * Created by tivachkov on 11/20/2017.
  */
 
 public class Table {

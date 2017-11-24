@@ -42,7 +42,6 @@ public class TablesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ConstraintLayout fragment = (ConstraintLayout) inflater.inflate(R.layout.fragment_tables, container, false);
-        //Context mContext = getActivity().getApplicationContext();
         mContext = getActivity();
         GridView gridView = (GridView) fragment.findViewById(R.id.grid_view_tables_fragment);
 

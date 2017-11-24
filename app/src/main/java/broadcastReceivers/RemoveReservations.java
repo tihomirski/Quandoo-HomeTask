@@ -35,13 +35,10 @@ public class RemoveReservations extends BroadcastReceiver {
         //Needs a separate thread. Otherwise throws exception because there are networks tasks in main GUI thread
         mPollThread = new Thread() {
             public void run() {
-
                     try {
                         DatabaseHandler dbHelper = new DatabaseHandler(mContext);
                         dbHelper.deleteAllReservations(mAlarmID);
-                        //dbHelper.deleteAlarm(mAlarmID);
                         sendNotification(mContext);
-                        Log.e("= = = = = = = =","RESERVATIONS DELETED!");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

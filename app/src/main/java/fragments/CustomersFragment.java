@@ -41,25 +41,12 @@ public class CustomersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ConstraintLayout fragment = (ConstraintLayout) inflater.inflate(R.layout.fragment_customers, container, false);
-        //Context mContext = getActivity().getApplicationContext();
         mContext = getActivity();
 
         mListView = (ListView) fragment.findViewById(R.id.customers_list_view);
-        // 1
 
         dbHandler = new DatabaseHandler(mContext);
         mCustomersList = dbHandler.getAllReservations();
-//        // 2
-//        String[] listItems = new String[mCustomersList.size()];
-//        // 3
-//        for(int i = 0; i < mCustomersList.size(); i++){
-//            Customer customer = mCustomersList.get(i);
-//            listItems[i] = customer.getFullname();
-//        }
-//        // 4
-//        //, R.id.cutomers_item_name_holder,
-//        ArrayAdapter adapter = new ArrayAdapter(fragment.getContext(), android.R.layout.simple_list_item_1, listItems);
-//        mListView.setAdapter(adapter);
 
         CustomersAdapter adapter = new CustomersAdapter(mContext, mCustomersList);
         mListView.setAdapter(adapter);
@@ -70,7 +57,6 @@ public class CustomersFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Customer selectedCustomer = mCustomersList.get(position);
                 Intent detailIntent = new Intent(mContext, ActivitySelectTable.class);
-                //detailIntent.putExtra("name", selectedCustomer.getName() + " " + selectedCustomer.getSurname());
                 detailIntent.putExtra("customerId", selectedCustomer.getId());
                 startActivity(detailIntent);
             }

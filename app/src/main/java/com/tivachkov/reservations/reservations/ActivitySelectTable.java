@@ -41,12 +41,9 @@ public class ActivitySelectTable extends AppCompatActivity {
                 if (currentTable.isAvailable()) {
                     currentTable.setAvailable(false);
                     mDBHandler.setTableAvailability(currentTable.isAvailable(), position);
-                    // This tells the GridView to redraw itself
-                    // in turn calling your BooksAdapter's getView method again for each cell
                     mTablesAdapter.notifyDataSetChanged();
 
                     Intent intent = getIntent();
-                    //int customerID = Integer.parseInt(intent.getStringExtra("customerId"));
                     int customerID = intent.getIntExtra("customerId", 0);
                     mDBHandler.deleteReservation(customerID);
 
@@ -54,7 +51,9 @@ public class ActivitySelectTable extends AppCompatActivity {
                     Intent mainActivityIntent = new Intent(sThisActivity, MainActivity.class);
                     startActivity(mainActivityIntent);
                 } else {
-                    //Here you can put some code to open another activity to check the status of the table
+                    //Here you can put some code to open another activity to check the status of the table.
+                    //At the end, if a table is available, there is not status to show.
+                    //But an occupied table has a status to show.
                 }
 
 

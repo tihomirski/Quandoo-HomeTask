@@ -16,7 +16,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView mBottomNavigationView;
     private DatabaseHandler mDBHandler;
     public static Activity sThisActivity;
-    private static final int ALARM_ID = 1234;
+    public static final int ALARM_ID = 1234;
     ProgressDialog mRingProgressDialog;
 
     @Override
@@ -51,12 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDBHandler = new DatabaseHandler(this);
 
-//        mDBHandler.dropAlarmsTableIfExists(mDBHandler.getWritableDatabase());
-//        mDBHandler.dropReservationsTableIfExists(mDBHandler.getWritableDatabase());
-//        mDBHandler.dropTablesTableIfExists(mDBHandler.getWritableDatabase());
-
         if (!mDBHandler.isTableExisting("Tables")) {
-            Log.e("HHHHHHHHHHHHH","Initializing all DBs");
 
             mRingProgressDialog.setMessage("App is initializing ....\n\n");
             mRingProgressDialog.setTitle("Please wait");
@@ -78,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
                             createAlarm();
                         } else if (alarm.getSchedule() < now) {
                             updateAlarm();
-                        } else
-                            Log.e("0101010101010101", "Alarm should NOT be created.");
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -93,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 createAlarm();
             } else if (alarm.getSchedule() < now) {
                 updateAlarm();
-            } else
-                Log.e("0101010101010101", "Alarm should NOT be created.");
+            }
         }
 
         if (savedInstanceState == null) {
@@ -156,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         mDBHandler.deleteAllReservations();
         mDBHandler.deleteAllTables();
 
-        Utils.insertCuatomersIntoDB(sThisActivity, mDBHandler);
+        Utils.insertCustomersIntoDB(sThisActivity, mDBHandler);
         Utils.insertTablesIntoDB(sThisActivity, mDBHandler);
     }
 
@@ -226,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createAlarm() {
-        Log.e("XxXxXxXxXxXxXxXxXxXx", "Setting an ALARM.......");
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         Calendar c = GregorianCalendar.getInstance();
@@ -238,16 +229,9 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
         mDBHandler.addAlarm(ALARM_ID, millis);
-
-        if(millis == mDBHandler.getAlarm(ALARM_ID).getSchedule()) {
-            Log.e("010101010101010", "millis == DB");
-        } else
-            Log.e("010101010101010", "millis != DB");
-
     }
 
     private void updateAlarm() {
-        Log.e("XxXxXxXxXxXxXxXxXxXx", "Updating an ALARM.......");
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         Calendar c = GregorianCalendar.getInstance();
@@ -259,11 +243,6 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_ID, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis, pendingIntent);
         mDBHandler.updateAlarm(ALARM_ID, millis);
-
-        if(millis == mDBHandler.getAlarm(ALARM_ID).getSchedule()) {
-            Log.e("010101010101010", "millis == DB");
-        } else
-            Log.e("010101010101010", "millis != DB");
     }
 
 }

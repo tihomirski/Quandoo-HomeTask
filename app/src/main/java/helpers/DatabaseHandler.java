@@ -32,12 +32,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         this.createReservationsTable(db);
         this.createTablesTable(db);
+        this.createAlarmsTable(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO implement later when needed
     }
+
+    //-----------------------------| Common methods |--------------------------------------------
 
     public boolean isTableExisting(String tableName) {
         SQLiteDatabase db = getWritableDatabase();
@@ -52,22 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return false;
     }
 
-    public int getDBTableCount(String tableName) {
-        int count = -1;
-
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT count(*) FROM " + tableName, null);
-        if (cursor.getCount() != 0) {
-            if (cursor.moveToFirst()) {
-                do {
-                    count = cursor.getInt(0);
-                } while (cursor.moveToNext());
-            }
-        }
-        db.close();
-
-        return count;
-    }
+    //----------------------------| Reservations (Customers) |------------------------------------
 
     public void createReservationsTable(SQLiteDatabase db) {
         Log.d("===| DBHandler class", "Creating Reservations Table....................");
@@ -93,20 +81,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("ID", customer.getId());
         values.put("Name", customer.getName());
         values.put("Surname", customer.getSurname());
-
         db.insert("Reservations", null, values);
         db.close();
     }
 
     public void deleteReservation(int id) {
-        //Utils.printAlarmsList(getAllAlarms());
-        //Log.d("===| DBHandler", "===================| Before - Then |==========================");
         SQLiteDatabase db = getWritableDatabase();
         db.delete("Reservations", "ID=?", (new String[] {String.valueOf(id)}));
         db.close();
-        //Utils.printAlarmsList(getAllAlarms());
     }
 
+    //This method simply deletes all reservations
     public void deleteAllReservations() {
         SQLiteDatabase db = getWritableDatabase();
         dropReservationsTableIfExists(db);
@@ -114,6 +99,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    //This one deletes all reservations, together with the alarm which is used to delete all reservations after 15 minutes
     public void deleteAllReservations(int alarmID) {
         SQLiteDatabase db = getWritableDatabase();
         dropReservationsTableIfExists(db);
@@ -146,7 +132,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.d("===| DBHandler class", "Creating Tables Table....................");
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS Tables(" +
-                        "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " + //No autoincrement, because the IDs of the users/customers should be assigned by Quandoo platform to each user/customer.
+                        "ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                         "Available INTEGER " +
                         ");"
         );
@@ -180,9 +166,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void addTable(Table table) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        //values.put("ID", customer.getId());
-        //values.put("Name", customer.getName());
-        values.put("Available", table.isAvailable());
+        int availableInt = -1;
+        if (table.isAvailable())
+            availableInt = 1;
+        else
+            availableInt = 0;
+        values.put("Available", availableInt);
 
         db.insert("Tables", null, values);
         db.close();
@@ -190,18 +179,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void setTableAvailability(boolean available, int id) {
 
-        //Utils.printAlarmsList(getAllAlarms());
-        //Log.d("===| DBHandler", "===================| Before - Then |==========================");
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         int availableInt;
-        if (available) availableInt = 1;
-        else availableInt = 0;
+        if (available)
+            availableInt = 1;
+        else
+            availableInt = 0;
 
         values.put("Available", availableInt);
         db.update("Tables", values, "ID=?", new String[] {String.valueOf(id+1)}); // id+1 because the IDs in the DB tables Tables start from 1 and in the gridview start from 0.
+
         db.close();
-        //Utils.printAlarmsList(getAllAlarms());
 
     }
 
@@ -251,9 +240,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateAlarm(int id, long schedule) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        //values.put("ID",id);
         values.put("Schedule", schedule);
-        db.update("Alarms", values, "ID=?", new String[] {String.valueOf(id)}); // id+1 because the IDs in the DB tables Tables start from 1 and in the gridview start from 0.
+        db.update("Alarms", values, "ID=?", new String[] {String.valueOf(id)});
         db.close();
     }
 
@@ -261,29 +249,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("Alarms", "ID=?", (new String[] {String.valueOf(id)}));
         db.close();
-        Log.e("hhhhhhhhhhhh", "Alarm deleted");
     }
 
     public Alarm getAlarm(int id) {
 
         SQLiteDatabase db = getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM Alarms WHERE ID=?", new String[] {String.valueOf(id)});
-//        Cursor cursor = db.query("Alarms",
-//                                    new String[] {"ID"},
-//                                    "ID",
-//                                    new String[] {String.valueOf(id)},
-//                                    null,
-//                                    null,
-//                                    null);
+
         if (cursor.getCount() != 0) {
             if (cursor.moveToFirst()) {
                 Alarm alarm = new Alarm(cursor.getInt(0), cursor.getLong(1));
-                Log.e("JaJaJaJaJaJaJa", "Alarm fetched. ID = " + alarm.getId() + " || Schedule = " + alarm.getSchedule() + " || now = " + GregorianCalendar.getInstance().getTimeInMillis());
                 return alarm;
             }
         }
         db.close();
-        Log.e("JaJaJaJaJaJaJa", "going to return null in getAlarm()");
         return null;
     }
 
