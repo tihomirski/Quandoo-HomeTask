@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
         Calendar c = GregorianCalendar.getInstance();
         long millis = c.getTimeInMillis();
-        millis += 1000 * 60 * 2;
+        millis += 1000 * 60 * 15;
 
         Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
         wakeIntent.putExtra("alarmID", ALARM_ID);
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
         Calendar c = GregorianCalendar.getInstance();
         long millis = c.getTimeInMillis();
-        millis += 1000 * 60 * 2;
+        millis += 1000 * 60 * 15;
 
         Intent wakeIntent = new Intent(this, broadcastReceivers.RemoveReservations.class);
         wakeIntent.putExtra("alarmID", ALARM_ID);
